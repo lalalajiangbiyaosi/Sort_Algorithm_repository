@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 func main() {
@@ -10,6 +11,8 @@ func main() {
 	C := Selection_sort(input)
 	fmt.Println(B)
 	fmt.Println(C)
+	fmt.Println("into merge_sort!")
+	fmt.Println(Merge_sort(input))
 }
 func Insert_sort(A []int) []int {
 
@@ -34,11 +37,64 @@ func Selection_sort(A []int) []int {
 				minValIndex = i
 
 			}
-			i = i + 1E
+			i = i + 1
 		}
 		if minValIndex != j {
 			A[j], A[minValIndex] = A[minValIndex], A[j]
 		}
 	}
 	return A
+}
+func Merge_sort(A []int) []int {
+	//	fmt.Println("Into mergo_sort!")
+	if len(A) < 2 {
+		return A
+	}
+	//	fmt.Println(A)
+	X := A[0 : len(A)/2]
+	Y := A[len(A)/2:]
+	n := []int{}
+	m := []int{}
+	//	fmt.Println(X, Y)
+	resultSlice := []int{}
+	switch len(X) {
+	case 1:
+		n = X
+	default:
+		n = Merge_sort(X)
+	}
+	switch len(Y) {
+	case 1:
+		m = Y
+	default:
+		m = Merge_sort(Y)
+	}
+	i, j := 0, 0
+	tempN := n[i]
+	tempM := m[j]
+	for k := 0; k < len(n)+len(m); k++ {
+
+		if tempN < tempM {
+			resultSlice = append(resultSlice, n[i])
+
+			i = i + 1
+			if i < len(n) {
+				tempN = n[i]
+			} else {
+				tempN = math.MaxInt64
+			}
+		} else {
+			resultSlice = append(resultSlice, m[j])
+			j = j + 1
+			if j < len(m) {
+				tempM = m[j]
+			} else {
+				tempM = math.MaxInt64
+			}
+		}
+	}
+	return resultSlice
+	//	fmt.Println(X)
+	//	fmt.Println(Y)
+	//	return A
 }
