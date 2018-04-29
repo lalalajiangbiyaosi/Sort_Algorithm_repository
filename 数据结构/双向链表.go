@@ -1,7 +1,6 @@
-package main
+package doubleLink
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -16,38 +15,16 @@ type DoubleLink struct {
 	length int
 }
 
-func main() {
-	db := NewDoubleLink()
-	// db.Insertfront(1)
-	// db.Insertlast(2)
-	// db.Insert(3, 3)
-	// db.Insertlast(4)
-	// db.Insertlast(5)
-	// db.Insert(99, 4)
-	for i := 0; i < 10; i++ {
-		db.Insertlast(i)
-	}
-	for i := 0; i < 5; i++ {
-		db.Deletefront()
-	}
-	fmt.Println(db.phead)
-	fmt.Println(db.phead.nextNode)
-	fmt.Println(db.phead.nextNode.nextNode)
-	fmt.Println(db.phead.nextNode.nextNode.nextNode)
-	fmt.Println(db.phead.nextNode.nextNode.nextNode.nextNode)
-
-}
-
 func NewDoubleLink() *DoubleLink {
 	return &DoubleLink{phead: &node{t: 0}, length: 0}
 }
 func (db *DoubleLink) Insertfront(t interface{}) bool {
-	newNode := &node{t: t, preNode: db.phead, nextNode: db.phead}
+	newNode := &node{t: t, preNode: db.phead, nextNode: db.phead} /*看的话需要细看，Insertfront与Insertlast逻辑类似*/
 	if db.phead.nextNode != nil {
 		newNode.nextNode = db.phead.nextNode
 		db.phead.nextNode.preNode = newNode
 	}
-	if db.phead.preNode == nil {
+	if db.phead.preNode == nil { // 由于初始化db.phead.preNode为nil，在第一次插入时需加以处理
 		db.phead.preNode = newNode
 	}
 	db.phead.nextNode = newNode
@@ -67,15 +44,12 @@ func (db *DoubleLink) Insertlast(t interface{}) bool {
 	db.length++
 	return true
 }
-
 func (db *DoubleLink) Insert(t interface{}, index int) bool {
 	if index > db.length {
-		return db.Insertlast(t)
+		return Insertlast(t)
 	}
 	newNode := &node{t: t}
-	oldNode, ok := db.getNode(index)
-	fmt.Println("oldNode is ", oldNode)
-	if !ok {
+	if oldNode, ok := getNode(index); !ok {
 		log.Fatal("Fetching node geting wrong!")
 	}
 	newNode.nextNode, newNode.preNode = oldNode, oldNode.preNode
@@ -83,7 +57,6 @@ func (db *DoubleLink) Insert(t interface{}, index int) bool {
 	oldNode.preNode = newNode
 	return true
 }
-
 func (db *DoubleLink) getNode(index int) (*node, bool) {
 	if index > db.length || index < 0 {
 		return nil, false
